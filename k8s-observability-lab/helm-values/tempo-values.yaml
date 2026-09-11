@@ -1,0 +1,15 @@
+tempo:
+  reportingEnabled: false
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+  retention: 24h
+persistence:
+  enabled: true
+  size: 5Gi
+serviceMonitor:
+  enabled: true

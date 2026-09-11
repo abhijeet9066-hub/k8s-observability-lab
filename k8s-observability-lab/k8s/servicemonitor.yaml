@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: observability-demo-api
+  namespace: observability-demo
+  labels:
+    release: kube-prometheus-stack
+spec:
+  namespaceSelector:
+    matchNames: ["observability-demo"]
+  selector:
+    matchLabels:
+      app: observability-demo-api
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

@@ -1,0 +1,35 @@
+{
+  "title": "Kubernetes Observability Lab",
+  "uid": "k8s-observability-lab",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "tags": ["kubernetes", "observability", "portfolio"],
+  "time": {"from": "now-1h", "to": "now"},
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Request rate",
+      "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8},
+      "targets": [{"expr": "sum(rate(demo_http_requests_total[5m]))", "legendFormat": "requests/s"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "p95 latency",
+      "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8},
+      "targets": [{"expr": "histogram_quantile(0.95, sum by (le) (rate(demo_http_request_duration_seconds_bucket[5m])))", "legendFormat": "p95"}]
+    },
+    {
+      "type": "stat",
+      "title": "5xx error ratio",
+      "gridPos": {"x": 0, "y": 8, "w": 8, "h": 6},
+      "targets": [{"expr": "sum(rate(demo_http_requests_total{status=~\"5..\"}[5m])) / clamp_min(sum(rate(demo_http_requests_total[5m])), 0.001)"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Checkout outcomes",
+      "gridPos": {"x": 8, "y": 8, "w": 16, "h": 6},
+      "targets": [{"expr": "sum by (outcome) (rate(demo_business_events_total[5m]))", "legendFormat": "{{outcome}}"}]
+    }
+  ]
+}

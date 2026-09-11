@@ -1,0 +1,29 @@
+name: CI
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r app/requirements.txt pyyaml
+      - name: Tests
+        run: python -m pytest -q app/tests
+      - name: Validate YAML syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          for path in list(Path('k8s').glob('*.yaml')) + list(Path('helm-values').glob('*.yaml')):
+              with path.open(encoding='utf-8') as f:
+                  list(yaml.safe_load_all(f))
+              print('validated', path)
+          PY
+      - name: Compile Python
+        run: python -m compileall -q app scripts
